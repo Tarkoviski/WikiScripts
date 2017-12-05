@@ -27,7 +27,7 @@ def checkblog():
         "Sep": "09",
         "Oct": "10",
         "Nov": "11",
-        "Dez": "12"
+        "Dec": "12"
     }
 
     pubdate = "blog-data = %s-%s-%s" % (pubS[3], monthNum[pubS[2]], pubS[1])
@@ -73,7 +73,7 @@ def checkupdated():
             "Sep.": "09",
             "Oct.": "10",
             "Nov.": "11",
-            "Dez.": "12"
+            "Dec.": "12"
             }
 
         updateMonth = updateDate.split(" ")[0]
