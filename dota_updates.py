@@ -4,6 +4,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 import feedparser
 import re
 import requests
+import time
 from bs4 import BeautifulSoup
 
 site = pywikibot.Site()
@@ -14,7 +15,7 @@ def checkblog():
     title = d['entries'][0]['title']
     pub = d['entries'][0]['published']
     pubS = pub.split(" ")
-
+	
     monthNum = {
         "Jan": "01",
         "Feb": "02",
@@ -31,12 +32,11 @@ def checkblog():
     }
 
     pubdate = "blog-data = %s-%s-%s" % (pubS[3], monthNum[pubS[2]], pubS[1])
-
     f = open("blog.txt", "r")
     if f.readline() == title:
-        print("Blog igual. Ignorando...")
+        print("PUBLICAÇÃO: Blog igual. Ignorando...")
     else:
-        print("Atualizando blog....")
+        print("PUBLICAÇÃO: Atualizando blog....")
         f2 = open("blog.txt", "w") 
         f2.write(title)
         f2.close() 
@@ -58,9 +58,8 @@ def checkupdated():
     if page.status_code == 200:
         soup = BeautifulSoup(page.content, 'html.parser')
         updates = soup.find_all("div", class_="recent_entry")
-
         updateDate = updates[0].find('div', attrs={'class': 'recent_entry_date'}).text
-
+		
         monthNum = {
             "Jan.": "01",
             "Feb.": "02",
@@ -75,35 +74,33 @@ def checkupdated():
             "Nov.": "11",
             "Dec.": "12"
             }
-
+			
         updateMonth = updateDate.split(" ")[0]
         updateDay = updateDate.split(" ")[1]
         updateYear = updateDate.split(" ")[2]
         updateFull = "%s-%s-%s" % (updateYear, monthNum[updateMonth], updateDay.replace(",", ""))
-
         currentDate = pywikibot.Page(site, u"Predefinição:Updates/Last")
         currentDatetext = currentDate.text
-
         datewiki = currentDatetext
         dateblog = updateFull
 
-        print("BLOG: " + dateblog + " | WIKI: " + datewiki)
-
         if datewiki == dateblog:
-            print("Igual ao blog")
+            print("ATUALIZAÇÃO: Igual ao blog")
         else:
-            print("Diferente do blog")
-            if datewiki > dateblog:
-                print("Wiki é mais recente (W:% - B:%)")
+            print("ATUALIZAÇÃO: Diferente do blog")
+            datewikisafe = time.strptime(datewiki, "%Y-%m-%d")
+            dateblogsafe = time.strptime(dateblog, "%Y-%m-%d")
+            print(datewikisafe)
+            if datewikisafe > dateblogsafe:
+                print("ATUALIZAÇÃO: Wiki é mais recente (W:%s - B:%s)" % (datewiki, dateblog))
             else:
-                print("Blog maior (W:% - B:%). Vamos atualizar!")
+                print("ATUALIZAÇÃO: Blog maior (W:%s - B:%s). Vamos atualizar!" % (datewiki, dateblog))
                 page = pywikibot.Page(site, u"Predefinição:Updates/Last")
                 page.text = u'' + dateblog + ''
                 page.save(u"Auto: Atualizando data da última atualização.")
-                print("Wiki atualizada para " + dateblog)
-
+                print("ATUALIZAÇÃO: Wiki atualizada para %s" % dateblog)
 
 scheduler = BlockingScheduler()
-scheduler.add_job(checkblog, 'interval', minutes=30)
-scheduler.add_job(checkupdated, 'interval', minutes=30)
+scheduler.add_job(checkblog, 'interval', minutes=1)
+scheduler.add_job(checkupdated, 'interval', minutes=1)
 scheduler.start()
