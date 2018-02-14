@@ -5,10 +5,12 @@ import feedparser
 import re
 import requests
 import time
+from time import gmtime, strftime
 from bs4 import BeautifulSoup
 
 site = pywikibot.Site()
 
+# Verificamos a o blog oficial para buscar por novas publicações
 def checkblog():
     d = feedparser.parse('http://br.dota2.com/feed/')
     link = d['entries'][0]['link'] 
@@ -33,10 +35,8 @@ def checkblog():
 
     pubdate = "blog-data = %s-%s-%s" % (pubS[3], monthNum[pubS[2]], pubS[1])
     f = open("blog.txt", "r")
-    if f.readline() == title:
-        print("PUBLICAÇÃO: Blog igual. Ignorando...")
-    else:
-        print("PUBLICAÇÃO: Atualizando blog....")
+    if f.readline() != title:
+        print("BLOG: Atualizando blog")
         f2 = open("blog.txt", "w") 
         f2.write(title)
         f2.close() 
@@ -49,10 +49,10 @@ def checkblog():
         pubSummary = "Auto: Nova publicação no Blog: \"%s\"" % title
         page.text = u'' + atualiza + ''
         page.save(u"" + pubSummary + "")
-        print(pubSummary)
 
     f.close()
 
+# Mesma coisa que a função anterior, só que para as atualizações recentes
 def checkupdated():
     page = requests.get("http://www.dota2.com/news/updates/")
     if page.status_code == 200:
@@ -84,23 +84,33 @@ def checkupdated():
         datewiki = currentDatetext
         dateblog = updateFull
 
-        if datewiki == dateblog:
-            print("ATUALIZAÇÃO: Igual ao blog")
-        else:
-            print("ATUALIZAÇÃO: Diferente do blog")
+        if datewiki != dateblog:
             datewikisafe = time.strptime(datewiki, "%Y-%m-%d")
             dateblogsafe = time.strptime(dateblog, "%Y-%m-%d")
-            print(datewikisafe)
             if datewikisafe > dateblogsafe:
+                # Algumas atualizações não são documentadas no blog oficial, não vamos sobrescrever isso
                 print("ATUALIZAÇÃO: Wiki é mais recente (W:%s - B:%s)" % (datewiki, dateblog))
             else:
-                print("ATUALIZAÇÃO: Blog maior (W:%s - B:%s). Vamos atualizar!" % (datewiki, dateblog))
                 page = pywikibot.Page(site, u"Predefinição:Updates/Last")
                 page.text = u'' + dateblog + ''
                 page.save(u"Auto: Atualizando data da última atualização.")
-                print("ATUALIZAÇÃO: Wiki atualizada para %s" % dateblog)
+                print("ATUALIZAÇÃO: Data atualizada para %s" % dateblog)
 
+# Atualizamos a nossa presença
+# Isso é usado mais como uma forma de verificação para ver se o bot ainda está funcionando corretamente
+def updatepresence():
+    lastBeat = pywikibot.Page(site, u"User:Espacorede/Beat")
+    lastBeatDate = lastBeat.text
+    today = str(strftime("%Y-%m-%d", gmtime()))
+
+    if lastBeatDate != today:
+        print("PRESENÇA: Atualizando presença")
+        page = pywikibot.Page(site, u"User:Espacorede/Beat")
+        page.text = u'' + today + ''
+        page.save(u"Auto: Atualizando presença.")
+ 
 scheduler = BlockingScheduler()
 scheduler.add_job(checkblog, 'interval', minutes=1)
 scheduler.add_job(checkupdated, 'interval', minutes=1)
+scheduler.add_job(updatepresence, 'interval', days=1)
 scheduler.start()
