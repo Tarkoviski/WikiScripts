@@ -12,7 +12,7 @@ site = pywikibot.Site()
 siteEn = pywikibot.Site("en", "dotawiki")
 
 templateURLEn = u"Template:Updates"
-templateURLPt = u"Utilizador:Tarkoviski/Testes"
+templateURLPt = u"Predefinição:Updates"
 
 # Verificamos a o blog oficial para buscar por novas publicações
 
