@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+from collections import OrderedDict
 import os
 import re
 
@@ -45,104 +45,98 @@ tf2_protodefs = {
     "zh-hant": "tf_proto_obj_defs_tchinese.txt"
 }
 
-# This probably shouldn't be hardcoded...
-decorated_collections = {
-    "Jungle Jackpot Collection": [
-        "Anodized Aloha",
-        "Bamboo Brushed",
-        "Croc Dusted",
-        "Leopard Printed",
-        "Macaw Masked",
-        "Mannana Peeled",
-        "Park Pigmented",
-        "Piña Polished",
-        "Sax Waxed",
-        "Tiger Buffed",
-        "Yeti Coated"
-    ],
-    "Infernal Reward War Paint Collection": [
-        "Bank Rolled",
-        "Bloom Buffed",
-        "Bonk Varnished",
-        "Cardboard Boxed",
-        "Clover Camo'd",
-        "Dream Piped",
-        "Fire Glazed",
-        "Freedom Wrapped",
-        "Kill Covered",
-        "Merc Stained",
-        "Pizza Polished",
-        "Quack Canvassed",
-        "Star Crossed"
-    ],
-    "Decorated War Hero Collection": [
-        "Carpet Bomber Mk.II",
-        "Woodland Warrior Mk.II",
-        "Wrapped Reviver Mk.II",
-        "Forest Fire Mk.II",
-        "Night Owl Mk.II",
-        "Woodsy Widowmaker Mk.II",
-        "Autumn Mk.II",
-        "Plaid Potshotter Mk.II",
-        "Civic Duty Mk.II",
-        "Civil Servant Mk.II"
-    ],
-    "Contract Campaigner Collection": [
-        "Dead Reckoner Mk.II",
-        "Bovine Blazemaker Mk.II",
-        "Backwoods Boomstick Mk.II",
-        "Masked Mender Mk.II",
-        "Macabre Web Mk.II",
-        "Iron Wood Mk.II",
-        "Nutcracker Mk.II",
-        "Smalltown Bringdown Mk.II"
-    ],
-    "Saxton Select Collection": [
-        "Dragon Slayer"
-    ],
-    "Mann Co. Events Collection": [
-        "Smissmas Sweater"
-    ],
-    "Winter 2017 Collection": [
-        "Miami Element",
-        "Jazzy",
-        "Mosaic",
-        "Cosmic Calamity",
-        "Hana",
-        "Uranium",
-        "Neo Tokyo",
-        "Hazard Warning",
-        "Damascus & Mahogany",
-        "Dovetailed",
-        "Alien Tech",
-        "Cabin Fevered",
-        "Polar Surprise",
-        "Bomber Soul",
-        "Geometrical Teams"
-    ],
-    "Scream Fortress X Collection": [
-        "Electroshocked",
-        "Tumor Toasted",
-        "Ghost Town",
-        "Skull Study",
-        "Spectral Shimmered",
-        "Calavera Canvas",
-        "Spirit of Halloween",
-        "Horror Holiday",
-        "Totally Boned",
-        "Haunted Ghosts"
-    ]
-}
-decorated_collections_order = [
-    "Jungle Jackpot Collection",
-    "Infernal Reward War Paint Collection",
-    "Decorated War Hero Collection",
-    "Contract Campaigner Collection",
-    "Saxton Select Collection",
-    "Mann Co. Events Collection",
-    "Winter 2017 Collection",
-    "Scream Fortress X Collection"
+decorated_collections = OrderedDict()
+decorated_collections["Jungle Jackpot Collection"] = [
+    "Anodized Aloha",
+    "Bamboo Brushed",
+    "Croc Dusted",
+    "Leopard Printed",
+    "Macaw Masked",
+    "Mannana Peeled",
+    "Park Pigmented",
+    "Piña Polished",
+    "Sax Waxed",
+    "Tiger Buffed",
+    "Yeti Coated"
 ]
+decorated_collections["Infernal Reward War Paint Collection"] = [
+    "Bank Rolled",
+    "Bloom Buffed",
+    "Bonk Varnished",
+    "Cardboard Boxed",
+    "Clover Camo'd",
+    "Dream Piped",
+    "Fire Glazed",
+    "Freedom Wrapped",
+    "Kill Covered",
+    "Merc Stained",
+    "Pizza Polished",
+    "Quack Canvassed",
+    "Star Crossed"
+]
+decorated_collections["Decorated War Hero Collection"] = sorted([
+    "Carpet Bomber Mk.II",
+    "Woodland Warrior Mk.II",
+    "Wrapped Reviver Mk.II",
+    "Forest Fire Mk.II",
+    "Night Owl Mk.II",
+    "Woodsy Widowmaker Mk.II",
+    "Autumn Mk.II",
+    "Plaid Potshotter Mk.II",
+    "Civic Duty Mk.II",
+    "Civil Servant Mk.II"
+])
+decorated_collections["Contract Campaigner Collection"] = sorted([
+    "Dead Reckoner Mk.II",
+    "Bovine Blazemaker Mk.II",
+    "Backwoods Boomstick Mk.II",
+    "Masked Mender Mk.II",
+    "Macabre Web Mk.II",
+    "Iron Wood Mk.II",
+    "Nutcracker Mk.II",
+    "Smalltown Bringdown Mk.II"
+])
+decorated_collections["Saxton Select Collection"] = ["Dragon Slayer"]
+decorated_collections["Mann Co. Events Collection"] = ["Smissmas Sweater"]
+decorated_collections["Winter 2017 Collection"] = sorted([
+    "Miami Element",
+    "Jazzy",
+    "Mosaic",
+    "Cosmic Calamity",
+    "Hana",
+    "Uranium",
+    "Neo Tokyo",
+    "Hazard Warning",
+    "Damascus & Mahogany",
+    "Dovetailed",
+    "Alien Tech",
+    "Cabin Fevered",
+    "Polar Surprise",
+    "Bomber Soul",
+    "Geometrical Teams"
+])
+decorated_collections["Scream Fortress X Collection"] = sorted([
+    "Electroshocked",
+    "Tumor Toasted",
+    "Ghost Town",
+    "Skull Study",
+    "Spectral Shimmered",
+    "Calavera Canvas",
+    "Spirit of Halloween",
+    "Horror Holiday",
+    "Totally Boned",
+    "Haunted Ghosts"
+])
+
+
+def clean_string(string):
+    res = lineWithCaptionRE.match(string)
+    if res:
+        clean_string = res.group("line").strip()
+    else:
+        clean_string = string.strip()
+
+    return escape_string(clean_string)
 
 
 def escape_string(string):
@@ -151,10 +145,11 @@ def escape_string(string):
     return string
 
 
-trans_dict = {}
+# I have no idea what this does and I"m afraid I"ll never understand
+trans_dict = OrderedDict()
 for lang in tf2_protodefs:
-    with open(SCRIPTS_LOCATION + os.sep + tf2_protodefs[lang], "rb") as f:
-        content = unicode(f.read(), "utf-16").encode("utf-8")
+    with open(SCRIPTS_LOCATION + os.sep + tf2_protodefs[lang], "r", encoding="utf-16") as f:
+        content = f.read()
         matches = tokenRE.findall(content)
 
         for match in matches:
@@ -168,6 +163,7 @@ for lang in tf2_protodefs:
 output = {}
 
 for collection in decorated_collections:
+    output[collection] = {}
     c_items_done = []
 
     for token in sorted(trans_dict.keys()):
@@ -183,22 +179,22 @@ for collection in decorated_collections:
                     collection=collection.lower(), filename=string_en.lower())
 
                 dictionary_entry += "\n  en: {string}".format(
-                    string=escape_string(string_en))
+                    string=clean_string(string_en))
 
                 langs = strings.keys()
-                langs.remove("en")
 
                 for lang in sorted(langs):
-                    dictionary_entry += "\n  {lang}: {string}".format(
-                        lang=lang, string=escape_string(strings[lang]))
+                    if lang is not "en":
+                        dictionary_entry += "\n  {lang}: {string}".format(
+                            lang=lang, string=clean_string(strings[lang]))
 
-                # TODO SORT ENTRIES
-                output[collection] = output.get(
-                    collection, "") + dictionary_entry
+                output[collection][clean_string(string_en)] = dictionary_entry
 
-with open("decorated_dictionary.txt", "wb") as f:
-    for collection in decorated_collections_order:
-        f.write("\n\n=== {0} ===".format(collection))
-        f.write("\n\n<!--")
-        f.write(output[collection])
+with open("decorated_dictionary.txt", "w", encoding="utf-8") as f:
+    for collection in decorated_collections:
+        f.write("\n\n=== {0} ===\n\n<!--".format(collection))
+
+        for item in decorated_collections[collection]:
+            f.write(output[collection][item])
+
         f.write("\n\n-->")
