@@ -57,7 +57,7 @@ def checkblog():
         pageText = page.text
 
         regexBlogDate = "(blog-data = ([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9]))"
-        regexBlogURL = "(http:\/\/br.dota2.com([-a-zA-Z0-9@:%_\+.~#?&//=]*))"
+        regexBlogURL = "(https?:\/\/br.dota2.com([-a-zA-Z0-9@:%_\+.~#?&//=]*))"
 
         newTextBlogURL = re.sub(regexBlogURL, blogLastEntryLink, pageText)
         newTextBlogDate = re.sub(regexBlogDate, "blog-data = %s-%s-%s" % (
